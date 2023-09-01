@@ -75,18 +75,11 @@ class _CurrentState(Generic[_Type]):
         self,
         initial_value: _Type | Callable[[], _Type],
     ) -> None:
-        if callable(initial_value):
-            self.value = initial_value()
-        else:
-            self.value = initial_value
-
+        self.value = initial_value() if callable(initial_value) else initial_value
         hook = current_hook()
 
         def dispatch(new: _Type | Callable[[_Type], _Type]) -> None:
-            if callable(new):
-                next_value = new(self.value)
-            else:
-                next_value = new
+            next_value = new(self.value) if callable(new) else new
             if not strictly_equal(next_value, self.value):
                 self.value = next_value
                 hook.schedule_render()
@@ -355,10 +348,7 @@ def use_callback(
     def setup(function: _CallbackFunc) -> _CallbackFunc:
         return memoize(lambda: function)
 
-    if function is not None:
-        return setup(function)
-    else:
-        return setup
+    return setup(function) if function is not None else setup
 
 
 class _LambdaCaller(Protocol):
@@ -439,10 +429,7 @@ def use_memo(
         def setup(function: Callable[[], _Type]) -> _Type:
             return memo.value
 
-    if function is not None:
-        return setup(function)
-    else:
-        return setup
+    return setup(function) if function is not None else setup
 
 
 class _Memo(Generic[_Type]):
@@ -482,17 +469,16 @@ def _try_to_infer_closure_values(
     func: Callable[..., Any] | None,
     values: Sequence[Any] | ellipsis | None,
 ) -> Sequence[Any] | None:
-    if values is ...:
-        if isinstance(func, FunctionType):
-            return (
-                [cell.cell_contents for cell in func.__closure__]
-                if func.__closure__
-                else []
-            )
-        else:
-            return None
-    else:
+    if values is not ...:
         return values
+    if isinstance(func, FunctionType):
+        return (
+            [cell.cell_contents for cell in func.__closure__]
+            if func.__closure__
+            else []
+        )
+    else:
+        return None
 
 
 def current_hook() -> LifeCycleHook:

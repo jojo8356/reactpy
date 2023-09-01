@@ -127,7 +127,7 @@ def module_from_template(
         DeprecationWarning,
     )
     template_name, _, template_version = template.partition("@")
-    template_version = "@" + template_version if template_version else ""
+    template_version = f"@{template_version}" if template_version else ""
 
     # We do this since the package may be any valid URL path. Thus we may need to strip
     # object parameters or query information so we save the resulting template under the
@@ -148,7 +148,7 @@ def module_from_template(
     content = Template(template_file.read_text()).substitute(variables)
 
     return module_from_string(
-        _FROM_TEMPLATE_DIR + "/" + package_name,
+        f"{_FROM_TEMPLATE_DIR}/{package_name}",
         content,
         fallback,
         resolve_exports,
@@ -356,8 +356,9 @@ def export(
         return _make_export(web_module, export_names, fallback, allow_children)
     else:
         if web_module.export_names is not None:
-            missing = sorted(set(export_names).difference(web_module.export_names))
-            if missing:
+            if missing := sorted(
+                set(export_names).difference(web_module.export_names)
+            ):
                 msg = f"{web_module.source!r} does not export {missing!r}"
                 raise ValueError(msg)
         return [

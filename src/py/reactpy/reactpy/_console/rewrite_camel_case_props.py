@@ -37,19 +37,18 @@ def rewrite_camel_case_props(paths: list[str]) -> None:
 def generate_rewrite(file: Path, source: str) -> str | None:
     tree = ast.parse(source)
 
-    changed = find_nodes_to_change(tree)
-    if not changed:
+    if changed := find_nodes_to_change(tree):
+        return rewrite_changed_nodes(file, source, tree, changed)
+    else:
         return None
-
-    new = rewrite_changed_nodes(file, source, tree, changed)
-    return new
 
 
 def find_nodes_to_change(tree: ast.AST) -> list[ChangedNode]:
-    changed: list[ChangedNode] = []
-    for el_info in find_element_constructor_usages(tree):
-        if _rewrite_props(el_info.props, _construct_prop_item):
-            changed.append(ChangedNode(el_info.call, el_info.parents))
+    changed: list[ChangedNode] = [
+        ChangedNode(el_info.call, el_info.parents)
+        for el_info in find_element_constructor_usages(tree)
+        if _rewrite_props(el_info.props, _construct_prop_item)
+    ]
     return changed
 
 
@@ -80,8 +79,8 @@ def _rewrite_props(
     props_node: ast.Dict | ast.Call,
     constructor: Callable[[str, ast.expr], tuple[str, ast.expr]],
 ) -> bool:
+    did_change = False
     if isinstance(props_node, ast.Dict):
-        did_change = False
         keys: list[ast.expr | None] = []
         values: list[ast.expr] = []
         for k, v in zip(props_node.keys, props_node.values):
@@ -98,7 +97,6 @@ def _rewrite_props(
         props_node.keys = keys
         props_node.values = values
     else:
-        did_change = False
         keywords: list[ast.keyword] = []
         for kw in props_node.keywords:
             if kw.arg is not None:

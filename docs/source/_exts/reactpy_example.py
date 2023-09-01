@@ -55,19 +55,18 @@ class WidgetExample(SphinxDirective):
                 )
             )
         else:
-            for path in sorted(
-                ex_files, key=lambda p: "" if p.name == "main.py" else p.name
-            ):
-                labeled_tab_items.append(
-                    (
-                        path.name,
-                        _literal_include(
-                            path=path,
-                            linenos=show_linenos,
-                        ),
-                    )
+            labeled_tab_items.extend(
+                (
+                    path.name,
+                    _literal_include(
+                        path=path,
+                        linenos=show_linenos,
+                    ),
                 )
-
+                for path in sorted(
+                    ex_files, key=lambda p: "" if p.name == "main.py" else p.name
+                )
+            )
         result_tab_item = (
             "🚀 result",
             _interactive_widget(
@@ -94,12 +93,13 @@ class WidgetExample(SphinxDirective):
 
 
 def _make_tab_items(labeled_content_tuples):
-    tab_items = ""
-    for label, content in labeled_content_tuples:
-        tab_items += _tab_item_template.format(
+    tab_items = "".join(
+        _tab_item_template.format(
             label=label,
             content=content.replace("\n", "\n    "),
         )
+        for label, content in labeled_content_tuples
+    )
     return _string_to_nested_lines(tab_items)
 
 
@@ -138,8 +138,7 @@ def _get_file_options(file: Path) -> list[str]:
             break
         if not OPTION_PATTERN.match(line):
             continue
-        option_string = line[1:].strip()
-        if option_string:
+        if option_string := line[1:].strip():
             options.append(option_string)
 
     return options

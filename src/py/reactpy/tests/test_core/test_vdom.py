@@ -27,30 +27,23 @@ def test_is_vdom(result, value):
     assert is_vdom(value) == result
 
 
-@pytest.mark.parametrize(
-    "actual, expected",
-    [
-        (
+@pytest.mark.parametrize("actual, expected", [(
             reactpy.vdom("div", [reactpy.vdom("div")]),
             {"tagName": "div", "children": [{"tagName": "div"}]},
-        ),
-        (
+        ), (
             reactpy.vdom("div", {"style": {"backgroundColor": "red"}}),
             {"tagName": "div", "attributes": {"style": {"backgroundColor": "red"}}},
-        ),
-        (
+        ), (
             # multiple iterables of children are merged
             reactpy.vdom("div", [reactpy.vdom("div"), 1], (reactpy.vdom("div"), 2)),
             {
                 "tagName": "div",
                 "children": [{"tagName": "div"}, 1, {"tagName": "div"}, 2],
             },
-        ),
-        (
+        ), (
             reactpy.vdom("div", {"on_event": FAKE_EVENT_HANDLER}),
             {"tagName": "div", "eventHandlers": FAKE_EVENT_HANDLER_DICT},
-        ),
-        (
+        ), (
             reactpy.vdom("div", reactpy.html.h1("hello"), reactpy.html.h2("world")),
             {
                 "tagName": "div",
@@ -59,21 +52,13 @@ def test_is_vdom(result, value):
                     {"tagName": "h2", "children": ["world"]},
                 ],
             },
-        ),
-        (
+        ), (
             reactpy.vdom("div", {"tagName": "div"}),
             {"tagName": "div", "children": [{"tagName": "div"}]},
-        ),
-        (
-            reactpy.vdom("div", (i for i in range(3))),
-            {"tagName": "div", "children": [0, 1, 2]},
-        ),
-        (
+        ), (reactpy.vdom("div", iter(range(3))), {"tagName": "div", "children": [0, 1, 2]}), (
             reactpy.vdom("div", (x**2 for x in [1, 2, 3])),
             {"tagName": "div", "children": [1, 4, 9]},
-        ),
-    ],
-)
+        )])
 def test_simple_node_construction(actual, expected):
     assert actual == expected
 
@@ -283,7 +268,7 @@ def test_invalid_vdom(value, error_message_pattern):
 @pytest.mark.skipif(not REACTPY_DEBUG_MODE.current, reason="Only warns in debug mode")
 def test_warn_cannot_verify_keypath_for_genereators():
     with pytest.warns(UserWarning) as record:
-        reactpy.vdom("div", (1 for i in range(10)))
+        reactpy.vdom("div", (1 for _ in range(10)))
         assert len(record) == 1
         assert (
             record[0]

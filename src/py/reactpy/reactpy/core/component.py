@@ -59,8 +59,7 @@ class Component:
         except TypeError:
             return f"{self.type.__name__}(...)"
         else:
-            items = ", ".join(f"{k}={v!r}" for k, v in args.items())
-            if items:
+            if items := ", ".join(f"{k}={v!r}" for k, v in args.items()):
                 return f"{self.type.__name__}({id(self):02x}, {items})"
             else:
                 return f"{self.type.__name__}({id(self):02x})"

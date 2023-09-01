@@ -301,8 +301,7 @@ class Layout:
             msg = f"Duplicate keys {duplicate_keys} at {new_state.patch_path or '/'!r}"
             raise ValueError(msg)
 
-        old_keys = set(old_state.children_by_key).difference(new_keys)
-        if old_keys:
+        if old_keys := set(old_state.children_by_key).difference(new_keys):
             self._unmount_model_states(
                 [old_state.children_by_key[key] for key in old_keys]
             )

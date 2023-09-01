@@ -814,17 +814,14 @@ async def test_elements_and_components_with_the_same_key_can_be_interchanged():
     @reactpy.component
     def Root():
         toggle, set_toggle.current = use_toggle(True)
-        if toggle:
-            return SomeComponent("x")
-        else:
-            return reactpy.html.div(SomeComponent("y"))
+        return SomeComponent("x") if toggle else reactpy.html.div(SomeComponent("y"))
 
     @reactpy.component
     def SomeComponent(name):
         @use_effect
         def some_effect():
-            effects.append("mount " + name)
-            return lambda: effects.append("unmount " + name)
+            effects.append(f"mount {name}")
+            return lambda: effects.append(f"unmount {name}")
 
         return reactpy.html.div(name)
 
@@ -951,10 +948,7 @@ async def test_switching_component_definition():
     @reactpy.component
     def Root():
         toggle, toggle_component.current = use_toggle(True)
-        if toggle:
-            return FirstComponent()
-        else:
-            return SecondComponent()
+        return FirstComponent() if toggle else SecondComponent()
 
     @reactpy.component
     def FirstComponent():
@@ -1099,10 +1093,7 @@ async def test_change_element_to_string_causes_unmount():
     @component
     def Root():
         toggle, set_toggle.current = use_toggle(True)
-        if toggle:
-            return html.div(Child())
-        else:
-            return html.div("some-string")
+        return html.div(Child()) if toggle else html.div("some-string")
 
     @component
     def Child():

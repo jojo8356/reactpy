@@ -182,9 +182,9 @@ def vdom(
                 DeprecationWarning,
             )
 
-        if kwargs:
-            msg = f"Extra keyword arguments {kwargs}"
-            raise ValueError(msg)
+    if kwargs:
+        msg = f"Extra keyword arguments {kwargs}"
+        raise ValueError(msg)
 
     model: VdomDict = {"tagName": tag}
 
@@ -307,7 +307,7 @@ def separate_attributes_and_event_handlers(
 
         separated_event_handlers[k] = handler
 
-    return separated_attributes, dict(separated_event_handlers.items())
+    return separated_attributes, dict(separated_event_handlers)
 
 
 def _is_attributes(value: Any) -> bool:

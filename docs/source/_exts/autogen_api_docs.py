@@ -121,17 +121,7 @@ def walk_python_files(root: Path, ignore_dirs: Collection[str]) -> Iterator[Path
         ------------------------
 
     """
-    for path in sorted(
-        root.iterdir(),
-        key=lambda path: (
-            # __init__.py files first
-            int(not path.name == "__init__.py"),
-            # then directories
-            int(not path.is_dir()),
-            # sort by file name last
-            path.name,
-        ),
-    ):
+    for path in sorted(root.iterdir(), key=lambda path: (int(path.name != "__init__.py"), int(not path.is_dir()), path.name)):
         if path.is_dir():
             if (path / "__init__.py").exists() and path.name not in ignore_dirs:
                 yield from walk_python_files(path, ignore_dirs)

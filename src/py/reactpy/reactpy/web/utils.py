@@ -9,8 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 def module_name_suffix(name: str) -> str:
-    if name.startswith("@"):
-        name = name[1:]
+    name = name.removeprefix("@")
     head, _, tail = name.partition("@")  # handle version identifier
     version, _, tail = tail.partition("/")  # get section after version
     return PurePosixPath(tail or head).suffix or ".js"
@@ -59,7 +58,7 @@ def resolve_module_exports_from_url(
         text = requests.get(url, timeout=5).text
     except requests.exceptions.ConnectionError as error:
         reason = "" if error is None else " - {error.errno}"
-        logger.warning("Did not resolve exports for url " + url + reason)
+        logger.warning(f"Did not resolve exports for url {url}{reason}")
         return set()
 
     export_names, references = resolve_module_exports_from_source(

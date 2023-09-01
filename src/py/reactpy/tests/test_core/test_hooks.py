@@ -639,9 +639,8 @@ async def test_use_reducer_dispatch_callback_identity_is_preserved():
     def reducer(count, action):
         if action == "increment":
             return count + 1
-        else:
-            msg = f"Unknown action '{action}'"
-            raise ValueError(msg)
+        msg = f"Unknown action '{action}'"
+        raise ValueError(msg)
 
     @reactpy.component
     def ComponentWithUseReduce():
@@ -1121,18 +1120,15 @@ async def test_conditionally_rendered_components_can_use_context():
     @reactpy.component
     def SomeComponent():
         state, set_state.current = reactpy.use_state(True)
-        if state:
-            return FirstCondition()
-        else:
-            return SecondCondition()
+        return FirstCondition() if state else SecondCondition()
 
     @reactpy.component
     def FirstCondition():
-        used_context_values.append(reactpy.use_context(some_context) + "-1")
+        used_context_values.append(f"{reactpy.use_context(some_context)}-1")
 
     @reactpy.component
     def SecondCondition():
-        used_context_values.append(reactpy.use_context(some_context) + "-2")
+        used_context_values.append(f"{reactpy.use_context(some_context)}-2")
 
     async with reactpy.Layout(
         some_context(SomeComponent(), value="the-value")

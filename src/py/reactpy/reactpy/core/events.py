@@ -71,10 +71,7 @@ def event(
             prevent_default,
         )
 
-    if function is not None:
-        return setup(function)
-    else:
-        return setup
+    return setup(function) if function is not None else setup
 
 
 class EventHandler:
