@@ -12,6 +12,7 @@
 - :func:`meta`
 - :func:`style`
 - :func:`title`
+- :func:`body`
 
 **Content sectioning**
 
@@ -332,6 +333,7 @@ h6 = make_vdom_constructor("h6")
 main = make_vdom_constructor("main")
 nav = make_vdom_constructor("nav")
 section = make_vdom_constructor("section")
+body = make_vdom_constructor("body")
 
 # Text content
 blockquote = make_vdom_constructor("blockquote")
