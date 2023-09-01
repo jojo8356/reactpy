@@ -271,9 +271,11 @@ def get_packages(context: Context) -> dict[str, PackageInfo]:
         if (maybe_pkg / "package.json").exists():
             packages.append(make_js_pkg_info(maybe_pkg))
         elif maybe_pkg.is_dir():
-            for maybe_ns_pkg in maybe_pkg.glob("*"):
-                if (maybe_ns_pkg / "package.json").exists():
-                    packages.append(make_js_pkg_info(maybe_ns_pkg))
+            packages.extend(
+                make_js_pkg_info(maybe_ns_pkg)
+                for maybe_ns_pkg in maybe_pkg.glob("*")
+                if (maybe_ns_pkg / "package.json").exists()
+            )
         else:
             msg = f"unexpected dir or file: {maybe_pkg}"
             raise Exit(msg)

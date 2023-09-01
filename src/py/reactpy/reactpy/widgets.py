@@ -22,11 +22,7 @@ def image(
     if format == "svg":
         format = "svg+xml"  # noqa: A001
 
-    if isinstance(value, str):
-        bytes_value = value.encode()
-    else:
-        bytes_value = value
-
+    bytes_value = value.encode() if isinstance(value, str) else value
     base64_value = b64encode(bytes_value).decode()
     src = f"data:image/{format};base64,{base64_value}"
 

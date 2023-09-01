@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 def get_node_depth(node: Node) -> int:
     i = 0
     cur_node = node
-    while cur_node.parent != node.document:
+    while cur_node.parent != cur_node.document:
         cur_node = cur_node.parent
         i += 1
     return i
@@ -48,7 +48,7 @@ def register_sections_as_label(app: Sphinx, document: Node) -> None:
         title = cast(nodes.title, node[0])
         ref_name = getattr(title, "rawsource", title.astext())
         if app.config.autosectionlabel_prefix_document:
-            name = nodes.fully_normalize_name(docname + ":" + ref_name)
+            name = nodes.fully_normalize_name(f"{docname}:{ref_name}")
         else:
             name = nodes.fully_normalize_name(ref_name)
         sectname = clean_astext(title)

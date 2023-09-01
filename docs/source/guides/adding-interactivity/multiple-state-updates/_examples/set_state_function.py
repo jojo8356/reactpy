@@ -2,8 +2,7 @@ from reactpy import component, html, run, use_state
 
 
 def increment(old_number):
-    new_number = old_number + 1
-    return new_number
+    return old_number + 1
 
 
 @component

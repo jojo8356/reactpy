@@ -281,14 +281,7 @@ def _vdom_attr_to_html_str(key: str, value: Any) -> tuple[str, str]:
         or key in DASHED_HTML_ATTRS
     ):
         key = key.replace("_", "-")
-    elif (
-        # camel to data-* attributes
-        key.startswith("data")
-        # camel to aria-* attributes
-        or key.startswith("aria")
-        # handle special cases
-        or key in DASHED_HTML_ATTRS
-    ):
+    elif key.startswith("data") or key.startswith("aria"):
         key = _CAMEL_CASE_SUB_PATTERN.sub("-", key)
 
     if callable(value):  # nocov

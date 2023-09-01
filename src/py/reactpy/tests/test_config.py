@@ -9,10 +9,9 @@ def reset_options():
     options = [value for value in config.__dict__.values() if isinstance(value, Option)]
 
     should_unset = object()
-    original_values = []
-    for opt in options:
-        original_values.append(opt.current if opt.is_set() else should_unset)
-
+    original_values = [
+        opt.current if opt.is_set() else should_unset for opt in options
+    ]
     yield
 
     for opt, val in zip(options, original_values):

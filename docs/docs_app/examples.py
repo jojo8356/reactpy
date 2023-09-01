@@ -47,10 +47,7 @@ def get_main_example_file_by_name(
     name: str, relative_to: str | Path | None = SOURCE_DIR
 ) -> Path:
     path = _get_root_example_path_by_name(name, relative_to)
-    if path.is_dir():
-        return path / "main.py"
-    else:
-        return path.with_suffix(".py")
+    return path / "main.py" if path.is_dir() else path.with_suffix(".py")
 
 
 def get_example_files_by_name(
@@ -59,9 +56,8 @@ def get_example_files_by_name(
     path = _get_root_example_path_by_name(name, relative_to)
     if path.is_dir():
         return [p for p in path.glob("*") if not p.is_dir()]
-    else:
-        path = path.with_suffix(".py")
-        return [path] if path.exists() else []
+    path = path.with_suffix(".py")
+    return [path] if path.exists() else []
 
 
 def _iter_example_files(root: Path) -> Iterator[Path]:

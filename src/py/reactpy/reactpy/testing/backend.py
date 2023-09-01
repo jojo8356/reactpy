@@ -147,8 +147,7 @@ class BackendFixture:
 
         self.mount(None)  # reset the view
 
-        logged_errors = self.list_logged_exceptions(del_log_records=False)
-        if logged_errors:  # nocov
+        if logged_errors := self.list_logged_exceptions(del_log_records=False):
             msg = "Unexpected logged exception"
             raise LogAssertionError(msg) from logged_errors[0]
 

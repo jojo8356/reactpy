@@ -98,8 +98,7 @@ def use_connection() -> Connection[WebSocket]:
 
 
 def _setup_common_routes(options: Options, app: Starlette) -> None:
-    cors_options = options.cors
-    if cors_options:  # nocov
+    if cors_options := options.cors:
         cors_params = (
             cors_options if isinstance(cors_options, dict) else {"allow_origins": ["*"]}
         )

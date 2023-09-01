@@ -3,10 +3,7 @@ from reactpy import component, html, run
 
 @component
 def Item(name, done):
-    if done:
-        return html.li(name, " ✔")
-    else:
-        return html.li(name)
+    return html.li(name, " ✔") if done else html.li(name)
 
 
 @component
